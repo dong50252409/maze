@@ -1,5 +1,5 @@
-{application, prime_maze, [
-    {description, "Prime maze generation algorithm implemented by Erlang"},
+{application, maze, [
+    {description, "Some of the maze generation algorithm library of Erlang"},
     {vsn, "0.1.0"},
     {registered, []},
     {applications, [
