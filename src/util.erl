@@ -3,12 +3,21 @@
 %% API
 -export([
     print_maze/1,
+    print_maze/2,
     rand/2,
     is_wall/2, add_wall/2, rem_wall/2,
     get_directions/4
 ]).
 
 print_maze(Maze) ->
+    print_maze_1(erlang:group_leader(), Maze).
+
+print_maze(Filename, Maze) ->
+    {ok, IO} = file:open(Filename, [write]),
+    print_maze(IO, Maze),
+    file:close(IO).
+
+print_maze_1(IO, Maze) ->
     Fun =
         fun(Index) ->
             ["X", [convert(E) || E <- tuple_to_list(element(Index, Maze))], "X\n"]
@@ -16,7 +25,7 @@ print_maze(Maze) ->
     Width = size(element(1, Maze)),
     High = size(Maze),
     Borders = [lists:duplicate(Width + 2, "X"), "\n"],
-    io:format("~ts", [[Borders, lists:map(Fun, lists:seq(1, High)), Borders]]).
+    io:format(IO, "~ts", [[Borders, lists:map(Fun, lists:seq(1, High)), Borders]]).
 
 convert(0) ->
     "X";

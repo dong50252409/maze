@@ -9,33 +9,35 @@
 -module(recursive_maze).
 
 %% API
--export([create_maze/2]).
+-export([create_maze/2, create_maze/4]).
 
 %%%=================================================================
 %%% API Functions
 %%%=================================================================
 create_maze(Width, High) ->
+    create_maze(Width, High, 1, 1).
+
+create_maze(Width, High, I, J) ->
     Width1 = Width div 2 * 2 + 1,
     High1 = High div 2 * 2 + 1,
     Maze = list_to_tuple(lists:duplicate(High1, list_to_tuple(lists:duplicate(Width1, 1)))),
-    gen_maze(Maze, 1, 1, Width1, High1).
+    gen_maze(Maze, [{1, 1, Width1, High1}], I, J).
 
-gen_maze(Maze, WStart, HStart, WEnd, HEnd) ->
-    case WEnd - WStart > 2 andalso HEnd - HStart > 2 of
+gen_maze(Maze, [{WStart, HStart, WEnd, HEnd} | T], I, J) ->
+    case WEnd - WStart > I andalso HEnd - HStart > J of
         true ->
             X = util:rand(WStart + 1, WEnd) div 2 * 2,
             Y = util:rand(HStart + 1, HEnd) div 2 * 2,
-            io:format("WStart:~w, HStart:~w, WEnd:~w, HEnd:~w X:~w Y:~w~n", [WStart, HStart, WEnd, HEnd, X, Y]),
             Walls = get_walls(X, Y, WStart, HStart, WEnd, HEnd),
             Maze1 = lists:foldl(fun util:add_wall/2, Maze, Walls),
-            util:print_maze(Maze1),
-            Maze2 = gen_maze(Maze1, WStart, HStart, X - 1, Y - 1),
-            Maze3 = gen_maze(Maze2, X + 1, 1, WEnd, Y - 1),
-            Maze4 = gen_maze(Maze3, 1, Y + 1, X - 1, HEnd),
-            gen_maze(Maze4, X + 1, Y + 1, WEnd, HEnd);
+            Heap = [{WStart, HStart, X - 1, Y - 1}, {X + 1, HStart, WEnd, Y - 1},
+                {WStart, Y + 1, X - 1, HEnd}, {X + 1, Y + 1, WEnd, HEnd} | T],
+            gen_maze(Maze1, Heap, I, J);
         false ->
-            Maze
-    end.
+            gen_maze(Maze, T, I, J)
+    end;
+gen_maze(Maze, [], _I, _J) ->
+    Maze.
 
 get_walls(X, Y, WStart, HStart, WEnd, HEnd) ->
     AllWalls = [
@@ -45,5 +47,13 @@ get_walls(X, Y, WStart, HStart, WEnd, HEnd) ->
         {rand:uniform(), [{rand:uniform(), {X, Y1}} || Y1 <- lists:seq(Y + 1, HEnd)]}
     ],
     [{_, Walls1}, {_, Walls2}, {_, Walls3}, {_, Walls4}] = lists:sort(AllWalls),
-    AllWalls1 = tl(lists:sort(Walls1)) ++ tl(lists:sort(Walls2)) ++ tl(lists:sort(Walls3)) ++ lists:sort(Walls4),
+    AllWalls1 = get_walls_1(lists:sort(Walls1))
+        ++ get_walls_1(lists:sort(Walls2))
+        ++ get_walls_1(lists:sort(Walls3))
+        ++ lists:sort(Walls4),
     [{X, Y} | [Wall || {_, Wall} <- AllWalls1]].
+
+get_walls_1([{_, {X, Y}} | T]) when X band 1 =:= 1; Y band 1 =:= 1 ->
+    T;
+get_walls_1([Grid | T]) ->
+    [Grid | get_walls_1(T)].
