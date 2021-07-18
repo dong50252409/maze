@@ -10,13 +10,10 @@
 
 -export([create_maze/2]).
 
-%%-type grid() :: {X :: non_neg_integer(), Y :: non_neg_integer()}.
--type maze() :: tuple().
-
 %%%=================================================================
 %%% API Functions
 %%%=================================================================
--spec create_maze(Width :: non_neg_integer(), High :: non_neg_integer()) -> maze().
+-spec create_maze(Width :: non_neg_integer(), High :: non_neg_integer()) -> Maze::tuple().
 create_maze(Width, High) ->
     Width1 = Width div 2 * 2 + 1,
     High1 = High div 2 * 2 + 1,

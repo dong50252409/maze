@@ -2,22 +2,27 @@
 
 %% API
 -export([
-    print_maze/1,
-    print_maze/2,
-    rand/2,
-    is_wall/2, add_wall/2, rem_wall/2,
-    get_directions/4
+    draw_maze/1,
+    draw_maze/2
 ]).
 
-print_maze(Maze) ->
-    print_maze_1(erlang:group_leader(), Maze).
+%% Internal API
+-export([rand/2, is_wall/2, add_wall/2, rem_wall/2, get_directions/4]).
 
-print_maze(Filename, Maze) ->
+-spec draw_maze(Maze :: tuple()) -> ok.
+draw_maze(Maze) ->
+    draw_maze_1(erlang:group_leader(), Maze).
+
+-spec draw_maze(Filename :: file:name_all(), Maze :: tuple()) -> ok | {error, Reason}.
+draw_maze(Filename, Maze) ->
     {ok, IO} = file:open(Filename, [write]),
-    print_maze(IO, Maze),
+    draw_maze(IO, Maze),
     file:close(IO).
 
-print_maze_1(IO, Maze) ->
+%%%=================================================================
+%%% Internal Functions
+%%%=================================================================
+draw_maze_1(IO, Maze) ->
     Fun =
         fun(Index) ->
             ["X", [convert(E) || E <- tuple_to_list(element(Index, Maze))], "X\n"]

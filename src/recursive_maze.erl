@@ -14,15 +14,20 @@
 %%%=================================================================
 %%% API Functions
 %%%=================================================================
+-spec create_maze(Width :: non_neg_integer(), High :: non_neg_integer()) -> Maze :: tuple().
 create_maze(Width, High) ->
     create_maze(Width, High, 1, 1).
 
+-spec create_maze(Width :: non_neg_integer(), High :: non_neg_integer(), I :: non_neg_integer(), J :: non_neg_integer()) -> Maze :: tuple().
 create_maze(Width, High, I, J) ->
     Width1 = Width div 2 * 2 + 1,
     High1 = High div 2 * 2 + 1,
     Maze = list_to_tuple(lists:duplicate(High1, list_to_tuple(lists:duplicate(Width1, 1)))),
     gen_maze(Maze, [{1, 1, Width1, High1}], I, J).
 
+%%%=================================================================
+%%% Internal Functions
+%%%=================================================================
 gen_maze(Maze, [{WStart, HStart, WEnd, HEnd} | T], I, J) ->
     case WEnd - WStart > I andalso HEnd - HStart > J of
         true ->

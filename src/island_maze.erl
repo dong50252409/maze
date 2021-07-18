@@ -14,9 +14,11 @@
 %%%=================================================================
 %%% API Functions
 %%%=================================================================
+-spec create_maze(Width :: non_neg_integer(), High :: non_neg_integer()) -> Maze :: tuple().
 create_maze(Width, High) ->
     create_maze(Width, High, 0.40).
 
+-spec create_maze(Width :: non_neg_integer(), High :: non_neg_integer(), Rate :: 0..1) -> Maze :: tuple().
 create_maze(Width, High, Rate) ->
     Maze = list_to_tuple(lists:duplicate(High, list_to_tuple(lists:duplicate(Width, 1)))),
     Grids = [{rand:uniform(), {X, Y}} || X <- lists:seq(1, Width), Y <- lists:seq(1, High)],

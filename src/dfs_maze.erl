@@ -11,6 +11,10 @@
 %% API
 -export([create_maze/2]).
 
+%%%=================================================================
+%%% API Functions
+%%%=================================================================
+-spec create_maze(Width :: non_neg_integer(), High :: non_neg_integer()) -> Maze :: tuple().
 create_maze(Width, High) ->
     Width1 = Width div 2 * 2 + 1,
     High1 = High div 2 * 2 + 1,
@@ -19,6 +23,9 @@ create_maze(Width, High) ->
     Heap = [{1, 1}],
     gen_maze(Maze1, Heap, Width1, High1).
 
+%%%=================================================================
+%%% Internal Functions
+%%%=================================================================
 gen_maze(Maze, [{X, Y} = Grid | T] = Heap, Width, High) ->
     Directions = util:get_directions(Grid, 2, Width, High),
     case choice_wall(Directions, Maze) of
