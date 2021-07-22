@@ -24,7 +24,7 @@ create_maze(Width, High, Rate) ->
     Grids = [{rand:uniform(), {X, Y}} || X <- lists:seq(1, Width), Y <- lists:seq(1, High)],
     ShuffleGrids = [Grid || {_, Grid} <- lists:sort(Grids)],
     Blocks = lists:sublist(ShuffleGrids, trunc(Width * High * Rate)),
-    Maze1 = lists:foldl(fun util:add_wall/2, Maze, Blocks),
+    Maze1 = lists:foldl(fun maze_util:add_wall/2, Maze, Blocks),
 
     Regulars1 = [regular_1(Width, High, 1, 5), regular_2(Width, High, 2, 2)],
     Maze2 = iterator_regular(Regulars1, {1, 1}, Width, High, Maze1, Maze1, 3),
@@ -38,9 +38,9 @@ create_maze(Width, High, Rate) ->
 iterator_regular(Regulars, {X, Y} = Grid, Width, High, PrevMaze, Maze, N) when N > 0 ->
     case any(Regulars, Grid, PrevMaze) of
         true ->
-            Maze1 = util:add_wall(Grid, Maze);
+            Maze1 = maze_util:add_wall(Grid, Maze);
         false ->
-            Maze1 = util:rem_wall(Grid, Maze)
+            Maze1 = maze_util:rem_wall(Grid, Maze)
     end,
     if
         X < Width ->
@@ -76,7 +76,7 @@ get_round_grids(Round) ->
 get_neighbour_blocks({X, Y}, Width, High, Maze, [{DX, DY} | T]) ->
     X1 = X + DX,
     Y1 = Y + DY,
-    case X1 =< 0 orelse X1 > Width orelse Y1 =< 0 orelse Y1 > High orelse util:is_wall({X1, Y1}, Maze) of
+    case X1 =< 0 orelse X1 > Width orelse Y1 =< 0 orelse Y1 > High orelse maze_util:is_wall({X1, Y1}, Maze) of
         true ->
             1 + get_neighbour_blocks({X, Y}, Width, High, Maze, T);
         false ->

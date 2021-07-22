@@ -25,7 +25,7 @@ create_maze(Width, High) ->
 %%% Internal Functions
 %%%=================================================================
 get_ways([Grid | T], Maze) ->
-    case util:is_wall(Grid, Maze) of
+    case maze_util:is_wall(Grid, Maze) of
         true ->
             get_ways(T, Maze);
         false ->
@@ -36,7 +36,7 @@ get_ways([], _Maze) ->
 
 add_walls([{X, Y} = Grid | T], {PX, PY} = ParentGrid, Maze, Walls, Width, High) ->
     {WX, WY} = WallGrid = {PX + max(min(X - PX, 1), -1), PY + max(min(Y - PY, 1), -1)},
-    case WX > 0 andalso WX =< Width andalso WY > 0 andalso WY =< High andalso util:is_wall(Grid, Maze) of
+    case WX > 0 andalso WX =< Width andalso WY > 0 andalso WY =< High andalso maze_util:is_wall(Grid, Maze) of
         true ->
             Walls1 = orddict:store(rand:uniform(), {Grid, WallGrid}, Walls),
             add_walls(T, ParentGrid, Maze, Walls1, Width, High);
@@ -49,12 +49,12 @@ add_walls([], _ParentGrid, _Maze, Walls, _Width, _High) ->
 gen_maze(Maze, [], _Width, _High) ->
     Maze;
 gen_maze(Maze, [{_, {Grid, ParentGrid}} | Walls], Width, High) ->
-    Directions1 = util:get_directions(Grid, 1, Width, High),
+    Directions1 = maze_util:get_directions(Grid, 1, Width, High),
     case get_ways(Directions1, Maze) of
         Count when Count < 1 ->
-            Maze1 = util:rem_wall(Grid, Maze),
-            Maze2 = util:rem_wall(ParentGrid, Maze1),
-            Directions2 = util:get_directions(Grid, 2, Width, High),
+            Maze1 = maze_util:rem_wall(Grid, Maze),
+            Maze2 = maze_util:rem_wall(ParentGrid, Maze1),
+            Directions2 = maze_util:get_directions(Grid, 2, Width, High),
             Walls1 = add_walls(Directions2, Grid, Maze2, Walls, Width, High),
             gen_maze(Maze2, Walls1, Width, High);
         _Count ->

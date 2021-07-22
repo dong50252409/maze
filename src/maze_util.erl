@@ -1,4 +1,4 @@
--module(util).
+-module(maze_util).
 
 %% API
 -export([
@@ -16,7 +16,7 @@ draw_maze(Maze) ->
 -spec draw_maze(Filename :: file:name_all(), Maze :: tuple()) -> ok | {error, Reason :: file:posix() | badarg | terminated}.
 draw_maze(Filename, Maze) ->
     {ok, IO} = file:open(Filename, [write]),
-    draw_maze(IO, Maze),
+    draw_maze_1(IO, Maze),
     file:close(IO).
 
 %%%=================================================================

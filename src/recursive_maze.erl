@@ -31,10 +31,10 @@ create_maze(Width, High, I, J) ->
 gen_maze(Maze, [{WStart, HStart, WEnd, HEnd} | T], I, J) ->
     case WEnd - WStart > I andalso HEnd - HStart > J of
         true ->
-            X = util:rand(WStart + 1, WEnd) div 2 * 2,
-            Y = util:rand(HStart + 1, HEnd) div 2 * 2,
+            X = maze_util:rand(WStart + 1, WEnd) div 2 * 2,
+            Y = maze_util:rand(HStart + 1, HEnd) div 2 * 2,
             Walls = get_walls(X, Y, WStart, HStart, WEnd, HEnd),
-            Maze1 = lists:foldl(fun util:add_wall/2, Maze, Walls),
+            Maze1 = lists:foldl(fun maze_util:add_wall/2, Maze, Walls),
             Heap = [{WStart, HStart, X - 1, Y - 1}, {X + 1, HStart, WEnd, Y - 1},
                 {WStart, Y + 1, X - 1, HEnd}, {X + 1, Y + 1, WEnd, HEnd} | T],
             gen_maze(Maze1, Heap, I, J);
