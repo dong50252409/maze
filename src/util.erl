@@ -13,7 +13,7 @@
 draw_maze(Maze) ->
     draw_maze_1(erlang:group_leader(), Maze).
 
--spec draw_maze(Filename :: file:name_all(), Maze :: tuple()) -> ok | {error, Reason}.
+-spec draw_maze(Filename :: file:name_all(), Maze :: tuple()) -> ok | {error, Reason :: file:posix() | badarg | terminated}.
 draw_maze(Filename, Maze) ->
     {ok, IO} = file:open(Filename, [write]),
     draw_maze(IO, Maze),
