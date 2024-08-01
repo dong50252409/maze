@@ -71,7 +71,7 @@ regular_2(Width, High, Round, Num) ->
     end.
 
 get_round_grids(Round) ->
-    [{DX, DY} || DX <- lists:seq(-Round, Round), DY <- lists:seq(-Round, Round)] -- [{0, 0}].
+    lists:delete({0,0}, [{DX, DY} || DX <- lists:seq(-Round, Round), DY <- lists:seq(-Round, Round)]).
 
 get_neighbour_blocks({X, Y}, Width, High, Maze, [{DX, DY} | T]) ->
     X1 = X + DX,
